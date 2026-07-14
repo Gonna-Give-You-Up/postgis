@@ -438,6 +438,11 @@ create_multilinestring(SHPDUMPERSTATE *state, LWMLINE *lwmultilinestring)
 	/* Allocate storage for ring pointers */
 	shpparts = malloc(sizeof(int) * lwmultilinestring->ngeoms);
 
+	if (!shpparts)
+    {
+        goto alloc_error;
+    }
+
 	/* First count through all the points in each linestring so we now how much memory is required */
 	for (i = 0; i < lwmultilinestring->ngeoms; i++)
 		shppointtotal += lwmultilinestring->geoms[i]->points->npoints;
@@ -449,6 +454,11 @@ create_multilinestring(SHPDUMPERSTATE *state, LWMLINE *lwmultilinestring)
 	ypts = malloc(sizeof(double) * shppointtotal);
 	zpts = malloc(sizeof(double) * shppointtotal);
 	mpts = malloc(sizeof(double) * shppointtotal);
+
+	if (!xpts || !ypts || !zpts || !mpts)
+    {
+        goto alloc_error;
+    }
 
 	/* Iterate through each linestring setting up shpparts to point to the beginning of each line */
 	for (i = 0; i < lwmultilinestring->ngeoms; i++)
@@ -479,6 +489,9 @@ create_multilinestring(SHPDUMPERSTATE *state, LWMLINE *lwmultilinestring)
 	free(ypts);
 	free(zpts);
 	free(mpts);
+
+	alloc_error:
+	lwerror("Memory allocation failed!");
 
 	return obj;
 }
