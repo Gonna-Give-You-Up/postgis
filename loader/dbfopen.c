@@ -1259,7 +1259,7 @@ int SHPAPI_CALL
 DBFGetRecordCount( DBFHandle psDBF )
 
 {
-    return( psDBF->nRecords );
+	return psDBF ? psDBF->nRecords : 0;
 }
 
 /************************************************************************/
